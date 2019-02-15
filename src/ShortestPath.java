@@ -47,7 +47,7 @@ public class ShortestPath {
 		}
 		this.adjacentVertex.add(this.vOrigin);
 		this.distance.set(this.map.vertices.indexOf(this.vOrigin), 0);
-		while(this.uncheckedVertex.size()!=0) {
+		//while(this.uncheckedVertex.size()!=0) {
 			for(int i=0;i<numTotalVertices;i++) {
 				this.vCurrent=this.adjacentVertex.get(i);
 				getNeighbor(this.vCurrent);
@@ -59,7 +59,7 @@ public class ShortestPath {
 				}
 				this.uncheckedVertex.remove(this.vCurrent);
 			}
-		}
+		//}
 		this.adjacentVertex.clear();
 	}
 	public void getNeighbor(Vertex v) {
