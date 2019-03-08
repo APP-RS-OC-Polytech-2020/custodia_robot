@@ -8,7 +8,6 @@ public class Main
 {
     public static void main(String[] args)
     {
-    	
     	int port=50008;
 		String ipServer="193.48.125.70";
     	ArrayList<String> hostname=new ArrayList<String>();

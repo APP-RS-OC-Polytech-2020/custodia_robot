@@ -31,6 +31,10 @@ public class SocketRobotino implements Runnable {
 		out.println("{\"type\":\"message\",\"message\":\"testRobotino\"}");
 		
 	}
+	/**
+	 * Send message
+	 * @param m
+	 */
 	public void envoyerMessage(String m){
 		out.println(m);
 	}
@@ -46,6 +50,10 @@ public class SocketRobotino implements Runnable {
 			System.out.println("client\tgetIntputStreamServer: "+inLine);
 		}
 	}
+	/**
+	 * Decode JSON from server
+	 * @param j
+	 */
 	public void decodeurJson(String j) {
 		try{
 			JSONObject JSON = new JSONObject(j);

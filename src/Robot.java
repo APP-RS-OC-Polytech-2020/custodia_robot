@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,15 +22,14 @@ public class Robot implements Runnable
     protected final Motor motor3;
     protected final OmniDrive omniDrive;
     protected final Bumper bumper;
-    //public AnalogInput analogInput;
-    //public DigitalInput digitalInput;
+    private Timer timer;
     protected final float[] startVector = new float[]
     {
         200.0f, 0.0f
     };
     protected boolean connectionStatus;
-    protected boolean isManual;
-
+    protected static boolean isManual;
+    
     public Robot(String hostname){
         this.hostname = hostname;
         com = new Com();
@@ -37,11 +38,27 @@ public class Robot implements Runnable
         motor3 = new Motor();
         omniDrive = new OmniDrive();
         bumper = new Bumper();
-        //analogInput = new AnalogInput();
-        //digitalInput = new DigitalInput();
-        this.isManual=true;
+        Robot.isManual=true;
+        
+        this.timer = new Timer();
+        this.timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+            	if(!Robot.isManual) {
+            		try {
+						checkAround();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	}
+                
+            }
+        }, 0, 35);
     }
-
+    /**
+     * Start robotino
+     */
     public void start(){
         System.out.println("Robot started.");
         
@@ -61,7 +78,9 @@ public class Robot implements Runnable
 
         System.out.println("Done.");
     }
-
+    /**
+     * Initialize omnidrive
+     */
     protected void init(){
         motor1.setComId(com.id());
         motor1.setMotorNumber(0);
@@ -76,27 +95,27 @@ public class Robot implements Runnable
 
         bumper.setComId(com.id());
     }
-
+    /**
+     * Connect to robotino
+     * @param hostname
+     */
     protected void connect(String hostname){
         com.setAddress(hostname);
         com.connect();
     }
-
+    /**
+     * Disconnect from robot
+     */
     protected void disconnect(){
         com.disconnect();
     }
-    
+    /**
+     * Returns whether the robot is connected or not
+     * @return connection status
+     */
     protected boolean isConnected(){
     	return com.isConnected();
     }
-    public boolean isManual() {
-		return isManual;
-	}
-
-	public void setManual(boolean isManual) {
-		this.isManual = isManual;
-	}
-
 	public void run() {
 		while(true){
 			if(true == bumper.value()){
@@ -110,9 +129,15 @@ public class Robot implements Runnable
 			}
         }
     }
-   
+   /**
+    * Move robot using parameters x and y
+    * @param x
+    * @param y
+    * @param force
+    * @throws InterruptedException
+    */
     protected void drive(float x, float y,float force) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && this.isManual){
+    	if(com.isConnected() && false == bumper.value() && Robot.isManual){
     		System.out.println("x : "+x*force);
     		System.out.println("y : "+y*force);
             omniDrive.setVelocity(x*force, y*force, 0);
@@ -124,12 +149,12 @@ public class Robot implements Runnable
     }
     
     /**
-     * 
+     * Rotate the robot
      * @param value
      * @throws InterruptedException
      */
     protected void rotate(float rotation) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && this.isManual){
+    	if(com.isConnected() && false == bumper.value() && Robot.isManual){
     		//  vx 	Velocity in x-direction in mm/s
         	//	vy 	Velocity in y-direction in mm/s
         	//	omega 	Angular velocity in deg/s
@@ -141,7 +166,25 @@ public class Robot implements Runnable
             omniDrive.setVelocity(0, 0, 90);
         }
     }  
-
+    /**
+     * Check around for QR Codes
+     * @throws InterruptedException
+     */
+    public void checkAround() throws InterruptedException {
+		if(!Robot.isManual) {
+			int i = -90;
+			while(i!=90){
+				this.rotate(10);
+				Thread.sleep(1000);
+				i=i+10;
+			}
+		}
+		this.rotate(-90);
+    }
+    /**
+     * Process JSON information coming from server
+     * @param JSON
+     */
     public void dataProcessing(JSONObject JSON){
     	String mode="";
 		try {
@@ -163,7 +206,7 @@ public class Robot implements Runnable
 			}else if(mode.equals("commandeAuto")){
 				JsonManager obj=new JsonManager(JSON);
 				boolean modeManual = obj.getModeManual();
-				this.setManual(modeManual);
+				Robot.isManual=modeManual;
 			}else if(mode.equals("burn")){
 				this.burn();
 			}else{
