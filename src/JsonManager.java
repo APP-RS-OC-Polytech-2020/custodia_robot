@@ -12,7 +12,7 @@ public class JsonManager {
 		return modeManual;
 	}
 	public String getIPAddress()throws JSONException{
-		String address = obj.getJSONObject("data").getString("ip");
+		String address = obj.getJSONObject("robot").getString("ip");
 		return address;
 	}
 	public float getX() throws JSONException {
@@ -23,17 +23,14 @@ public class JsonManager {
 		float posY = obj.getJSONObject("data").getInt("y");
 		return posY;
 	}
-	public float getAngle() throws JSONException {
-		float radian =obj.getJSONObject("data").getJSONObject("angle").getLong("degree");
-		return radian;
-	}
 	public float getForce() throws JSONException {
-		float force = obj.getJSONObject("data").getInt("force");
+		float force = obj.getJSONObject("data").getInt("power");
 		return force;
 	}
 	
 	public float getRotation() throws JSONException{
-		float rotation = obj.getInt("rotate");
+		System.out.println("Rotate");
+		float rotation =obj.getJSONObject("data").getLong("rotate");
 		return rotation;
 	}
 }

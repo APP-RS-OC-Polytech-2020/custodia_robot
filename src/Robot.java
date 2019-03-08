@@ -111,7 +111,7 @@ public class Robot implements Runnable
         }
     }
    
-    protected void drive(float x, float y, float angle,float force) throws InterruptedException{
+    protected void drive(float x, float y,float force) throws InterruptedException{
     	if(com.isConnected() && false == bumper.value() && this.isManual == true){
             omniDrive.setVelocity(x*force, y*force, 0);
             //omniDrive.setVelocity((float)(5*Math.sqrt(x*x+y*y)), 0, angle/4);
@@ -147,7 +147,7 @@ public class Robot implements Runnable
 			System.out.println(mode);
 			if(mode.equals("rotation")){
 				try {
-					this.drive(0,0,0,0);
+					this.drive(0,0,0);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -166,18 +166,17 @@ public class Robot implements Runnable
 				this.burn();
 			}else{
 				try {
-					this.drive(0,0,0,0);
+					this.drive(0,0,0);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				JsonManager obj=new JsonManager(JSON);
 				float posX = obj.getX();
 				float posY = obj.getY();
-				float angle = obj.getAngle();
 				float force = obj.getForce();
-				System.out.println("x: "+posX+"   y:"+posY+"   angle:"+angle+" force"+ force);
+				System.out.println("x: "+posX+"   y:"+posY+" force"+ force);
 				try {
-					this.drive(posX,posY,angle,force);
+					this.drive(posX,posY,force);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

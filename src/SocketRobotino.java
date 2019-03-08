@@ -61,7 +61,7 @@ public class SocketRobotino implements Runnable {
 				System.out.println("CoRobo\tMessage: "+message);
 				//exmple pour le décodage de JSON
 				//String dName = JSON.getJSONObject("infoCommande").getJSONObject("destinataire").getString("name");
-			}else if(type.equals("commande")){
+			}else if(type.equals("command")){
 				this.robot.dataProcessing(JSON);				
 			}
 		}catch(org.json.JSONException e){
