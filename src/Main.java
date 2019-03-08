@@ -24,17 +24,4 @@ public class Main
     		r.start();
     	}
     }	
-}//lire entrée sortie analogique du robot
-/*
-int f = (int) r.analogInput.numAnalogInputs();
-for(int i=0;i<f;i++){
-	r.analogInput.setInputNumber(i);
-	//System.out.println(r.analogInput);
-	System.out.println("Entree numero " + i  + " value " + r.analogInput.value());
 }
-int g = (int) r.digitalInput.numDigitalInputs();
-for(int i=0;i<g;i++){
-	r.digitalInput.setInputNumber(i);
-	//System.out.println(r.analogInput);
-	System.out.println("Entree numero " + i  + " value " + r.digitalInput.value());
-}*/

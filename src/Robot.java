@@ -112,7 +112,9 @@ public class Robot implements Runnable
     }
    
     protected void drive(float x, float y,float force) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && this.isManual == true){
+    	if(com.isConnected() && false == bumper.value() && this.isManual){
+    		System.out.println("x : "+x*force);
+    		System.out.println("y : "+y*force);
             omniDrive.setVelocity(x*force, y*force, 0);
             //omniDrive.setVelocity((float)(5*Math.sqrt(x*x+y*y)), 0, angle/4);
             //	vx 	Velocity in x-direction in mm/s
@@ -127,7 +129,7 @@ public class Robot implements Runnable
      * @throws InterruptedException
      */
     protected void rotate(float rotation) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && this.isManual == true){
+    	if(com.isConnected() && false == bumper.value() && this.isManual){
     		//  vx 	Velocity in x-direction in mm/s
         	//	vy 	Velocity in y-direction in mm/s
         	//	omega 	Angular velocity in deg/s
@@ -165,11 +167,6 @@ public class Robot implements Runnable
 			}else if(mode.equals("burn")){
 				this.burn();
 			}else{
-				try {
-					this.drive(0,0,0);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				JsonManager obj=new JsonManager(JSON);
 				float posX = obj.getX();
 				float posY = obj.getY();

@@ -29,7 +29,6 @@ public class JsonManager {
 	}
 	
 	public float getRotation() throws JSONException{
-		System.out.println("Rotate");
 		float rotation =obj.getJSONObject("data").getLong("rotate");
 		return rotation;
 	}
