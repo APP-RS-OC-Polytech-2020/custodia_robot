@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -9,6 +8,7 @@ import rec.robotino.com.Bumper;
 import rec.robotino.com.Com;
 import rec.robotino.com.Motor;
 import rec.robotino.com.OmniDrive;
+import rec.robotino.com.Odometry;
 /**
  * @author Johann Pistorius
  * @author Thibaud Murtin
@@ -22,15 +22,22 @@ public class Robot implements Runnable
     protected final Motor motor3;
     protected final OmniDrive omniDrive;
     protected final Bumper bumper;
-    private Timer timer;
+    protected final Odometry odometry;
+    
     protected final float[] startVector = new float[]
     {
         200.0f, 0.0f
     };
     protected boolean connectionStatus;
-    protected static boolean isManual;
+    protected boolean isManual;
     
-    public Robot(String hostname){
+    
+    
+    
+    public boolean isManual() {
+		return this.isManual;
+	}
+	public Robot(String hostname){
         this.hostname = hostname;
         com = new Com();
         motor1 = new Motor();
@@ -38,23 +45,8 @@ public class Robot implements Runnable
         motor3 = new Motor();
         omniDrive = new OmniDrive();
         bumper = new Bumper();
-        Robot.isManual=true;
-        
-        this.timer = new Timer();
-        this.timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-            	if(!Robot.isManual) {
-            		try {
-						checkAround();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            	}
-                
-            }
-        }, 0, 35);
+        odometry=new Odometry();
+        this.isManual=true;
     }
     /**
      * Start robotino
@@ -136,10 +128,8 @@ public class Robot implements Runnable
     * @param force
     * @throws InterruptedException
     */
-    protected void drive(float x, float y,float force) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && Robot.isManual){
-    		System.out.println("x : "+x*force);
-    		System.out.println("y : "+y*force);
+    protected void drive(float x, float y, float force) throws InterruptedException{
+    	if(com.isConnected() && false == bumper.value() ){
             omniDrive.setVelocity(x*force, y*force, 0);
             //omniDrive.setVelocity((float)(5*Math.sqrt(x*x+y*y)), 0, angle/4);
             //	vx 	Velocity in x-direction in mm/s
@@ -154,32 +144,17 @@ public class Robot implements Runnable
      * @throws InterruptedException
      */
     protected void rotate(float rotation) throws InterruptedException{
-    	if(com.isConnected() && false == bumper.value() && Robot.isManual){
+    	if(com.isConnected() && false == bumper.value()){
     		//  vx 	Velocity in x-direction in mm/s
         	//	vy 	Velocity in y-direction in mm/s
         	//	omega 	Angular velocity in deg/s
-            omniDrive.setVelocity(0, 0, 90*rotation);         
+            omniDrive.setVelocity(0, 0, 18*rotation);
         }
     }
     protected void burn(){
     	while (!Thread.interrupted() && com.isConnected() && false == bumper.value()){
             omniDrive.setVelocity(0, 0, 90);
         }
-    }  
-    /**
-     * Check around for QR Codes
-     * @throws InterruptedException
-     */
-    public void checkAround() throws InterruptedException {
-		if(!Robot.isManual) {
-			int i = -90;
-			while(i!=90){
-				this.rotate(10);
-				Thread.sleep(1000);
-				i=i+10;
-			}
-		}
-		this.rotate(-90);
     }
     /**
      * Process JSON information coming from server
@@ -206,7 +181,7 @@ public class Robot implements Runnable
 			}else if(mode.equals("commandeAuto")){
 				JsonManager obj=new JsonManager(JSON);
 				boolean modeManual = obj.getModeManual();
-				Robot.isManual=modeManual;
+				this.isManual=modeManual;	
 			}else if(mode.equals("burn")){
 				this.burn();
 			}else{
@@ -214,7 +189,6 @@ public class Robot implements Runnable
 				float posX = obj.getX();
 				float posY = obj.getY();
 				float force = obj.getForce();
-				System.out.println("x: "+posX+"   y:"+posY+" force"+ force);
 				try {
 					this.drive(posX,posY,force);
 				} catch (InterruptedException e) {

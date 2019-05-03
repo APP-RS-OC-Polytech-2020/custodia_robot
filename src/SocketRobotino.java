@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -38,6 +39,14 @@ public class SocketRobotino implements Runnable {
 	public void envoyerMessage(String m){
 		out.println(m);
 	}
+	public void envoyerJSON(JSONObject jsonObj){
+		out.println(jsonObj);
+	}
+	public void odometry() throws JSONException{
+		JsonManager json=new JsonManager(new JSONObject());
+		envoyerJSON(json.sendPhi(this.robot.odometry.phi()));
+		
+	}
 	public void run() {
 		String inLine="";
 		while(inLine!=null){
@@ -71,6 +80,10 @@ public class SocketRobotino implements Runnable {
 				//String dName = JSON.getJSONObject("infoCommande").getJSONObject("destinataire").getString("name");
 			}else if(type.equals("command")){
 				this.robot.dataProcessing(JSON);				
+			}else if(type.equals("auto")){
+				JsonManager obj=new JsonManager(JSON);
+				boolean modeManual = obj.getModeManual();
+				this.robot.isManual=modeManual;
 			}
 		}catch(org.json.JSONException e){
 			System.out.println("CoRobo\terreur decodage JSON: "+e);

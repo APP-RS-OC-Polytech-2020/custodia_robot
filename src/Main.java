@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 
+import org.json.JSONException;
+
 /**
  * @author Johann Pistorius
  * @author Thibaud Murtin
  */
 public class Main
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws InterruptedException, JSONException
     {
     	int port=50008;
 		String ipServer="193.48.125.70";
@@ -19,8 +21,12 @@ public class Main
     		SocketRobotino socketRobotino = new SocketRobotino(ipServer, port,r,host);
     		new Thread(socketRobotino).start();
     		new Thread(r).start();
-			
     		r.start();
+    		while(true){
+    			Thread.sleep(500);
+    			socketRobotino.odometry();
+    		}
+
     	}
     }	
 }

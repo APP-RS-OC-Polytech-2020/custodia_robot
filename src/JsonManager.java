@@ -13,7 +13,7 @@ public class JsonManager {
 	 * @throws JSONException
 	 */
 	public boolean getModeManual()throws JSONException{
-		boolean modeManual = (boolean) obj.getBoolean("modeManuel");
+		boolean modeManual = (boolean) obj.getBoolean("manualMode");
 		return modeManual;
 	}
 	/**
@@ -58,7 +58,13 @@ public class JsonManager {
 	 * @throws JSONException
 	 */
 	public float getRotation() throws JSONException{
-		float rotation =obj.getJSONObject("data").getLong("rotate");
+		float rotation =obj.getJSONObject("data").getInt("rotate");
 		return rotation;
+	}
+	public JSONObject sendPhi(float phi) throws JSONException{
+		JSONObject odometry=new JSONObject();
+		odometry.put("type", "odometry");
+		odometry.put("phi", phi);
+		return odometry;
 	}
 }
