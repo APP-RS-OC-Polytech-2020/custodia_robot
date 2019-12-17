@@ -61,6 +61,12 @@ public class JsonManager {
 		float rotation =obj.getJSONObject("data").getInt("rotate");
 		return rotation;
 	}
+	/**
+	 * Send the phi odometry value
+	 * @param phi
+	 * @return
+	 * @throws JSONException
+	 */
 	public JSONObject sendPhi(float phi) throws JSONException{
 		JSONObject odometry=new JSONObject();
 		odometry.put("type", "odometry");

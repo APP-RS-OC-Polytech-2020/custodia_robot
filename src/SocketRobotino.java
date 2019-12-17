@@ -39,9 +39,17 @@ public class SocketRobotino implements Runnable {
 	public void envoyerMessage(String m){
 		out.println(m);
 	}
+	/**
+	 * send JSON
+	 * @param jsonObj
+	 */
 	public void envoyerJSON(JSONObject jsonObj){
 		out.println(jsonObj);
 	}
+	/**
+	 * send odometry value phi
+	 * @throws JSONException
+	 */
 	public void odometry() throws JSONException{
 		JsonManager json=new JsonManager(new JSONObject());
 		envoyerJSON(json.sendPhi(this.robot.odometry.phi()));
